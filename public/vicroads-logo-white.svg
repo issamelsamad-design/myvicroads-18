@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" fill="none">
+  <!-- VicRoads tick - single continuous ribbon shape -->
+  <!-- Left stroke: lighter green diagonal band from top-left to bottom-center -->
+  <path d="M2,3 L9,3 L21,28 L14,28 Z" fill="#7cb342"/>
+  <!-- Right stroke: darker green from bottom up-right, with angular top -->
+  <path d="M14,28 L21,28 L38,3 L31,3 L18,22 Z" fill="#1b5e20"/>
+  <!-- Small fold/arrow at top of right stroke -->
+  <path d="M31,3 L38,3 L34,10 L27,10 Z" fill="#388e3c"/>
+  <!-- "vic roads" text in white -->
+  <text x="44" y="22" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16.5" font-weight="500" fill="white" letter-spacing="0.8">vic roads</text>
+</svg>

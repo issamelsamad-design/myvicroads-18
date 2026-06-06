@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin:0; background:#e0e0e0; font-family:-apple-system,sans-serif; }
+  .wrap { width:720px; margin:20px auto; }
+  .label { font-size:12px; color:#333; margin:18px 0 5px; font-weight:700; letter-spacing:.02em; }
+  .card { display:flex; position:relative; overflow:hidden; height:260px; border-radius:4px; }
+  .diag { position:absolute;inset:0;z-index:0;pointer-events:none; }
+  .wm { position:absolute;pointer-events:none;
+        -webkit-mask-image:url('public/coat-of-arms-white.png');mask-image:url('public/coat-of-arms-white.png');
+        -webkit-mask-size:contain;mask-size:contain;
+        -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+        -webkit-mask-position:center;mask-position:center; }
+  .photocol { width:52%;position:relative;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;padding:10px 6px 10px 10px;box-sizing:border-box; }
+  .photo { border-radius:16px;overflow:hidden;width:100%;height:100%;background:#aab5b5;display:flex;align-items:center;justify-content:center;color:#fff8;font-size:14px; }
+  .qrcol { width:48%;display:flex;align-items:center;justify-content:center;z-index:2;padding:14px 10px 14px 6px;box-sizing:border-box; }
+  .qrcard { background:#fff;border-radius:16px;padding:14px;text-align:center;box-shadow:0 1px 4px #0001;display:flex;flex-direction:column;justify-content:center;gap:10px;width:100%;height:100%;box-sizing:border-box; }
+  .btn { background:#1f2937;color:#fff;font-weight:700;border-radius:999px;padding:10px 8px;font-size:13px; }
+  p { margin:0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="label">CURRENT — bg #c3d8a9 · mid #c87765@.46 · right #9bbd80@.42</div>
+  <div class="card" style="background:#c3d8a9">
+    <svg class="diag" preserveAspectRatio="xMidYMid slice"><defs><pattern id="d0" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(255,255,255,0.22)" stroke-width="0.6"/></pattern></defs><rect width="100%" height="100%" fill="url(#d0)"/></svg>
+    <div class="wm" style="left:50%;top:50%;transform:translate(-50%,-50%);width:124px;height:194px;z-index:3;background-color:#c87765;opacity:.46"></div>
+    <div class="wm" style="right:-18px;top:50%;transform:translateY(-50%);width:90px;height:141px;z-index:3;background-color:#9bbd80;opacity:.42"></div>
+    <div class="photocol"><div class="photo">No photo</div></div>
+    <div class="qrcol"><div class="qrcard"><p style="font-size:11px;color:#6b7280">Presenting a QR code allows your driver licence information to be scanned and shared.</p><p style="font-size:13px;font-weight:700;color:#111827">Do you consent to share your information?</p><div class="btn">Reveal QR code</div></div></div>
+  </div>
+
+  <div class="label">TARGET — bg #c8dcac · mid #c4966e@.46 · right #b6d09e@.42</div>
+  <div class="card" style="background:#c8dcac">
+    <svg class="diag" preserveAspectRatio="xMidYMid slice"><defs><pattern id="d1" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(255,255,255,0.22)" stroke-width="0.6"/></pattern></defs><rect width="100%" height="100%" fill="url(#d1)"/></svg>
+    <div class="wm" style="left:50%;top:50%;transform:translate(-50%,-50%);width:124px;height:194px;z-index:3;background-color:#c4966e;opacity:.46"></div>
+    <div class="wm" style="right:-18px;top:50%;transform:translateY(-50%);width:90px;height:141px;z-index:3;background-color:#b6d09e;opacity:.42"></div>
+    <div class="photocol"><div class="photo">No photo</div></div>
+    <div class="qrcol"><div class="qrcard"><p style="font-size:11px;color:#6b7280">Presenting a QR code allows your driver licence information to be scanned and shared.</p><p style="font-size:13px;font-weight:700;color:#111827">Do you consent to share your information?</p><div class="btn">Reveal QR code</div></div></div>
+  </div>
+
+  <div class="label">TARGET+ (slightly warmer mid) — bg #c8dcac · mid #c49060@.50 · right #b6d09e@.44</div>
+  <div class="card" style="background:#c8dcac">
+    <svg class="diag" preserveAspectRatio="xMidYMid slice"><defs><pattern id="d2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(255,255,255,0.22)" stroke-width="0.6"/></pattern></defs><rect width="100%" height="100%" fill="url(#d2)"/></svg>
+    <div class="wm" style="left:50%;top:50%;transform:translate(-50%,-50%);width:124px;height:194px;z-index:3;background-color:#c49060;opacity:.50"></div>
+    <div class="wm" style="right:-18px;top:50%;transform:translateY(-50%);width:90px;height:141px;z-index:3;background-color:#b6d09e;opacity:.44"></div>
+    <div class="photocol"><div class="photo">No photo</div></div>
+    <div class="qrcol"><div class="qrcard"><p style="font-size:11px;color:#6b7280">Presenting a QR code allows your driver licence information to be scanned and shared.</p><p style="font-size:13px;font-weight:700;color:#111827">Do you consent to share your information?</p><div class="btn">Reveal QR code</div></div></div>
+  </div>
+
+</div>
+</body>
+</html>
