@@ -194,8 +194,13 @@ export default function LicenceDetails() {
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen bg-white max-w-lg mx-auto flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin" />
+      <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)' }}>
+        <div style={{ width: 88, height: 88, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, #4caf50, #2e7d32)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 32px rgba(46,125,50,0.35)' }}>
+          <svg width="52" height="52" viewBox="0 0 64 64" fill="none" style={{ animation: 'spin 0.9s linear infinite', transformOrigin: '32px 32px' }}>
+            <circle cx="32" cy="32" r="22" stroke="rgba(255,255,255,0.2)" strokeWidth="5" fill="none"/>
+            <path d="M 32 10 A 22 22 0 1 1 10 32" stroke="white" strokeWidth="5" strokeLinecap="round" fill="none"/>
+          </svg>
+        </div>
       </div>
     );
   }
@@ -227,7 +232,7 @@ export default function LicenceDetails() {
       </div>
 
       {/* Photo + QR section */}
-      <div className="flex relative overflow-hidden" style={{ backgroundColor: '#c8dcac', height: 280 }}>
+      <div className="flex relative overflow-hidden" style={{ backgroundColor: '#aed581', height: 280, boxShadow: '0 6px 20px rgba(0,0,0,0.18)' }}>
 
         {/* Diagonal lines */}
         <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0, pointerEvents: 'none' }} xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
