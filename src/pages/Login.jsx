@@ -5,8 +5,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   sendPasswordResetEmail,
   onAuthStateChanged,
 } from 'firebase/auth';
@@ -51,54 +49,33 @@ export default function Login() {
   };
 
   useEffect(() => {
-    let unsubAuth = null;
-
-    const setupAuthListener = () => {
-      unsubAuth = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          try {
-            await navigateByStatus(user, user.displayName);
-          } catch {
-            setLoading(false);
-          }
-        } else {
+    // If the user already has a session, route them straight in
+    const unsubAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          await navigateByStatus(user, user.displayName);
+        } catch {
           setLoading(false);
         }
-      });
-    };
-
-    // Check for mobile Google redirect result first, then fall back to auth listener
-    getRedirectResult(auth)
-      .then(async (result) => {
-        if (result?.user) {
-          await navigateByStatus(result.user, result.user.displayName);
-        } else {
-          setupAuthListener();
-        }
-      })
-      .catch((e) => {
-        if (e.code !== 'auth/popup-closed-by-user') setError(e.message);
+      } else {
         setLoading(false);
-        setupAuthListener();
-      });
-
-    return () => { if (unsubAuth) unsubAuth(); };
+      }
+    });
+    return () => unsubAuth();
   }, []);
 
   const handleGoogle = async () => {
     setError('');
     setLoading(true);
     try {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        // Redirect: page navigates away to Google, result is handled on return in useEffect
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        const result = await signInWithPopup(auth, googleProvider);
-        await navigateByStatus(result.user, result.user.displayName);
-      }
+      // Popup keeps sign-in on our own domain (no cross-domain redirect),
+      // which avoids Safari/iOS purging the session and logging users out.
+      const result = await signInWithPopup(auth, googleProvider);
+      await navigateByStatus(result.user, result.user.displayName);
     } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+      if (err.code === 'auth/popup-blocked') {
+        setError('Your browser blocked the popup. Please open this page directly in Safari or Chrome and try again.');
+      } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
         setError(err.message);
       }
       setLoading(false);

@@ -14,7 +14,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-setPersistence(auth, browserLocalPersistence).catch(() => {});
+// Keep users signed in across visits. Awaited so the session is saved
+// before any sign-in runs (prevents the occasional race that logged people out).
+export const authReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
