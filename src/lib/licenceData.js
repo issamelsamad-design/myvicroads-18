@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const defaults = {
   firstName: '',
@@ -21,35 +22,58 @@ const defaults = {
   pPlateColor: 'green',
 };
 
-function getUserKey(email) {
-  return `vicroads_licence_data_${email}`;
-}
-
 export function useLicenceData() {
   const [data, setDataState] = useState({ ...defaults });
-  const [userEmail, setUserEmail] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) return;
-      setUserEmail(user.email);
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setDataState({ ...defaults });
+        setLoading(false);
+        return;
+      }
+
+      setUserId(user.uid);
+
       try {
-        const stored = localStorage.getItem(getUserKey(user.email));
-        if (stored) {
-          setDataState({ ...defaults, ...JSON.parse(stored) });
+        const snap = await getDoc(doc(db, 'users', user.uid));
+
+        if (snap.exists() && snap.data().licenceData) {
+          // Load from Firestore
+          setDataState({ ...defaults, ...snap.data().licenceData });
+        } else {
+          // First time — migrate any old localStorage data if it exists
+          const oldKey = `vicroads_licence_data_${user.email}`;
+          const stored = localStorage.getItem(oldKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setDataState({ ...defaults, ...parsed });
+            await setDoc(doc(db, 'users', user.uid), { licenceData: parsed }, { merge: true });
+            localStorage.removeItem(oldKey);
+          }
         }
-      } catch {}
+      } catch (err) {
+        console.error('Failed to load licence data:', err);
+      }
+
+      setLoading(false);
     });
+
     return () => unsub();
   }, []);
 
-  const setData = (newData) => {
+  const setData = async (newData) => {
     setDataState(newData);
-    const key = userEmail
-      ? getUserKey(userEmail)
-      : 'vicroads_licence_data';
-    localStorage.setItem(key, JSON.stringify(newData));
+    if (userId) {
+      try {
+        await setDoc(doc(db, 'users', userId), { licenceData: newData }, { merge: true });
+      } catch (err) {
+        console.error('Failed to save licence data:', err);
+      }
+    }
   };
 
-  return { data, setData };
+  return { data, setData, loading };
 }
