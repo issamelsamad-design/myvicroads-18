@@ -40,7 +40,7 @@ export default function Login() {
 
   const navigateByStatus = async (user, displayName) => {
     const status = await handleUserDoc(user, displayName);
-    if (status === 'approved') navigate('/home', { replace: true });
+    if (status === 'approved') navigate('/', { replace: true });
     else if (status === 'rejected') {
       setError('Your access has been denied.');
       await auth.signOut();
