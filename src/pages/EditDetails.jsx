@@ -71,44 +71,38 @@ export default function EditDetails() {
 
   const set = (field) => (value) => setForm(prev => ({ ...prev, [field]: value }));
 
+  // Downscale + compress the image in the browser so it fits inside Firestore's
+  // 1 MB document limit. This avoids needing Firebase Storage (which is off on the free plan).
   const handleImage = (field) => (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => {
-      setForm(prev => ({ ...prev, [field]: ev.target.result, [`${field}_pending`]: true }));
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 700;
+        let { width, height } = img;
+        if (width > height && width > maxDim) { height = Math.round(height * maxDim / width); width = maxDim; }
+        else if (height > maxDim) { width = Math.round(width * maxDim / height); height = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        setForm(prev => ({ ...prev, [field]: compressed }));
+      };
+      img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   };
 
-  const uploadImageIfNeeded = async (field, value) => {
-    if (!value || !value.startsWith('data:')) return value;
-    const uid = auth.currentUser?.uid;
-    if (!uid) throw new Error('You must be signed in to upload images.');
-
-    const storageRef = ref(storage, `users/${uid}/${field}_${Date.now()}`);
-    await uploadString(storageRef, value, 'data_url');
-    return await getDownloadURL(storageRef);
-  };
-
   const handleSave = async () => {
     try {
-      const updatedForm = { ...form };
-      // Upload photo and signature to Firebase Storage, then store only the URL.
-      // (Raw base64 images are too large for Firestore's 1 MB document limit.)
-      if (form.photo_pending) {
-        updatedForm.photo = await uploadImageIfNeeded('photo', form.photo);
-        delete updatedForm.photo_pending;
-      }
-      if (form.signature_pending) {
-        updatedForm.signature = await uploadImageIfNeeded('signature', form.signature);
-        delete updatedForm.signature_pending;
-      }
-      await setData(updatedForm);
+      await setData(form);
       navigate(-1);
     } catch (err) {
       console.error('Save failed:', err);
-      alert('Could not save your photo. ' + (err?.message || 'Please try again.'));
+      alert('Could not save. ' + (err?.message || 'Please try again.'));
     }
   };
 
