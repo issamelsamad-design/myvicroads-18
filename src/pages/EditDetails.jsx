@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { storage } from '../lib/firebase';
+import { storage, auth } from '../lib/firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../lib/AuthContext';
 import { ChevronLeft, Upload, X, Trash2 } from 'lucide-react';
@@ -82,22 +82,20 @@ export default function EditDetails() {
   };
 
   const uploadImageIfNeeded = async (field, value) => {
-    if (!value || !value.startsWith('data:') || !currentUser) return value;
-    try {
-      const storageRef = ref(storage, `users/${currentUser.uid}/${field}_${Date.now()}`);
-      await uploadString(storageRef, value, 'data_url');
-      const url = await getDownloadURL(storageRef);
-      return url;
-    } catch (err) {
-      console.error('Upload failed:', err);
-      return value; // fallback to base64
-    }
+    if (!value || !value.startsWith('data:')) return value;
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error('You must be signed in to upload images.');
+
+    const storageRef = ref(storage, `users/${uid}/${field}_${Date.now()}`);
+    await uploadString(storageRef, value, 'data_url');
+    return await getDownloadURL(storageRef);
   };
 
   const handleSave = async () => {
     try {
       const updatedForm = { ...form };
-      // Upload photo and signature to Firebase Storage if they are new base64 images
+      // Upload photo and signature to Firebase Storage, then store only the URL.
+      // (Raw base64 images are too large for Firestore's 1 MB document limit.)
       if (form.photo_pending) {
         updatedForm.photo = await uploadImageIfNeeded('photo', form.photo);
         delete updatedForm.photo_pending;
@@ -106,12 +104,11 @@ export default function EditDetails() {
         updatedForm.signature = await uploadImageIfNeeded('signature', form.signature);
         delete updatedForm.signature_pending;
       }
-      setData(updatedForm);
+      await setData(updatedForm);
       navigate(-1);
     } catch (err) {
       console.error('Save failed:', err);
-      setData(form);
-      navigate(-1);
+      alert('Could not save your photo. ' + (err?.message || 'Please try again.'));
     }
   };
 
