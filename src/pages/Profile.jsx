@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ExternalLink, Fingerprint, HelpCircle } from 'lucide-react';
 import PersonalInfoModal from '@/components/PersonalInfoModal';
+import AddressesModal from '@/components/AddressesModal';
+import SecuritySettingsModal from '@/components/SecuritySettingsModal';
 
 const SectionCard = ({ children, className = '' }) => (
   <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden ${className}`}>
@@ -36,16 +38,16 @@ const MenuItem = ({ title, subtitle, onClick, showChevron = true, icon }) => (
 export default function Profile() {
   const navigate = useNavigate();
   const [isPersonalInfoOpen, setIsPersonalInfoOpen] = useState(false);
+  const [isAddressesOpen, setIsAddressesOpen] = useState(false);
+  const [isSecurityOpen, setIsSecurityOpen] = useState(false);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
-      {/* Header */}
       <div className="bg-slate-50 px-5 py-6">
         <h1 className="text-3xl font-bold text-slate-900">Profile</h1>
       </div>
 
       <div className="px-4 space-y-6">
-        {/* Profile and settings */}
         <SectionCard>
           <SectionHeader title="Profile and settings" />
           <MenuItem 
@@ -55,12 +57,12 @@ export default function Profile() {
           />
           <MenuItem 
             title="Addresses" 
-            onClick={() => navigate('/profile/addresses')} 
+            onClick={() => setIsAddressesOpen(true)} 
             showChevron={false}
           />
           <MenuItem 
             title="Security settings" 
-            onClick={() => navigate('/profile/security')} 
+            onClick={() => setIsSecurityOpen(true)} 
             showChevron={false}
           />
           <MenuItem 
@@ -70,7 +72,6 @@ export default function Profile() {
           />
         </SectionCard>
 
-        {/* App controls */}
         <SectionCard>
           <SectionHeader title="App controls" />
           <MenuItem 
@@ -93,10 +94,17 @@ export default function Profile() {
         </SectionCard>
       </div>
 
-      {/* The Pop-up Modal */}
       <PersonalInfoModal 
         isOpen={isPersonalInfoOpen} 
         onClose={() => setIsPersonalInfoOpen(false)} 
+      />
+      <AddressesModal 
+        isOpen={isAddressesOpen} 
+        onClose={() => setIsAddressesOpen(false)} 
+      />
+      <SecuritySettingsModal 
+        isOpen={isSecurityOpen} 
+        onClose={() => setIsSecurityOpen(false)} 
       />
     </div>
   );

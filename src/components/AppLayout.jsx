@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
+import CookieConsent from './CookieConsent';
 
 export default function AppLayout() {
   return (
@@ -8,6 +9,7 @@ export default function AppLayout() {
         <Outlet />
       </main>
       <BottomNav />
+      <CookieConsent />
     </div>
   );
 }
