@@ -11,10 +11,12 @@ export default function UserManagement() {
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
       const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      // Sort: pending first, then approved, then rejected
+      // Sort: pending first, then approved, then rejected — alphabetical by name within each group
       list.sort((a, b) => {
         const order = { pending: 0, approved: 1, rejected: 2 };
-        return (order[a.status] ?? 3) - (order[b.status] ?? 3);
+        const byStatus = (order[a.status] ?? 3) - (order[b.status] ?? 3);
+        if (byStatus !== 0) return byStatus;
+        return (a.name || a.email || '').localeCompare(b.name || b.email || '', undefined, { sensitivity: 'base' });
       });
       setUsers(list);
     });
