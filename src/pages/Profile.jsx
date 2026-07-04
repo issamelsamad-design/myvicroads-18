@@ -1,32 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ExternalLink, LogOut, Fingerprint } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import MenuItem from '@/components/MenuItem';
 
 const SectionCard = ({ children, className = '' }) => (
-  <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden ${className}`}>
+  <div className={`bg-white rounded-2xl shadow-sm overflow-hidden ${className}`}>
     {children}
   </div>
 );
 
-const MenuItem = ({ title, subtitle, onClick, showChevron = true, icon, danger = false }) => (
-  <button
-    onClick={onClick}
-    className={`w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0 ${
-      danger ? 'text-red-600' : ''
-    }`}
-  >
-    <div className="flex items-center gap-3 flex-1">
-      {icon && <div className={danger ? 'text-red-600' : 'text-slate-400'}>{icon}</div>}
-      <div className="flex-1 text-left">
-        <p className={`text-[15px] font-medium ${danger ? 'text-red-600' : 'text-slate-900'}`}>
-          {title}
-        </p>
-        {subtitle && (
-          <p className="text-[13px] text-slate-500 mt-0.5">{subtitle}</p>
-        )}
-      </div>
-    </div>
-    {showChevron && <ChevronRight className="w-5 h-5 text-slate-400" />}
-  </button>
+const SectionHeader = ({ title }) => (
+  <div className="px-5 py-4 border-b border-gray-100">
+    <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+  </div>
 );
 
 export default function Profile() {
@@ -36,21 +21,22 @@ export default function Profile() {
     window.open('https://d6tizftlrpuof.cloudfront.net/live/i/5eb8d0a8935ddb3aab0f27c1/3d686d0a7985acd86e65e167b22fff89e38d9299.html?reset', '_blank');
   };
 
-  const handleLogout = () => {
-    if (confirm('Are you sure you want to log out?')) {
-      // Add your logout logic here
-      navigate('/login');
-    }
-  };
-
   return (
-    <div className="bg-slate-50 min-h-screen pb-24">
-      <div className="bg-slate-50 px-5 py-6">
-        <h1 className="text-3xl font-bold text-slate-900">Profile</h1>
+    <div className="bg-gray-50 min-h-screen pb-24">
+      {/* Header */}
+      <div className="bg-gray-50 px-5 py-6">
+        <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
       </div>
 
       <div className="px-4 space-y-6">
+        {/* Profile and settings */}
         <SectionCard>
+          <SectionHeader title="Profile and settings" />
+          <MenuItem 
+            title="Personal information" 
+            onClick={() => navigate('/profile/personal-info')} 
+            showChevron={false}
+          />
           <MenuItem 
             title="Addresses" 
             onClick={() => navigate('/profile/addresses')} 
@@ -68,41 +54,27 @@ export default function Profile() {
           />
         </SectionCard>
 
+        {/* App controls */}
         <SectionCard>
-          <div className="px-5 py-4 border-b border-slate-100">
-            <h2 className="text-lg font-semibold text-slate-900">App controls</h2>
-          </div>
+          <SectionHeader title="App controls" />
           <MenuItem 
             title="Biometrics and settings" 
             subtitle="Enable biometrics and deactivate card or account"
             onClick={() => navigate('/profile/biometrics')} 
-            icon={<Fingerprint className="w-5 h-5" />}
+            showChevron={true}
           />
           <MenuItem 
             title="Help and info" 
             onClick={() => navigate('/profile/help')} 
+            showChevron={true}
           />
           <MenuItem 
             title="Provide app feedback" 
             onClick={handleFeedback}
+            rightIcon={<ExternalLink className="w-4 h-4 text-gray-400" />}
             showChevron={false}
-            icon={<ExternalLink className="w-5 h-5 text-slate-400" />}
           />
         </SectionCard>
-
-        <SectionCard>
-          <MenuItem 
-            title="Log out" 
-            onClick={handleLogout}
-            showChevron={false}
-            icon={<LogOut className="w-5 h-5" />}
-            danger={true}
-          />
-        </SectionCard>
-
-        <p className="text-center text-sm text-slate-500 pb-4">
-          App version 1.3.5
-        </p>
       </div>
     </div>
   );
