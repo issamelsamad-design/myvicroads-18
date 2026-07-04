@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, Clock, RefreshCw } from 'lucide-react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 
 const STATUS_STYLES = {
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700' },
@@ -35,6 +35,18 @@ export default function AccessRequestsPanel() {
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, status } : u));
     } catch (e) {
       alert('Failed to update. Try again.');
+    }
+    setActionLoading(null);
+  };
+
+  const removeUser = async (userId) => {
+    if (!window.confirm('Permanently remove this user? They will need to request access again.')) return;
+    setActionLoading(userId);
+    try {
+      await deleteDoc(doc(db, 'users', userId));
+      setUsers(prev => prev.filter(u => u.id !== userId));
+    } catch (e) {
+      alert('Failed to remove. Try again.');
     }
     setActionLoading(null);
   };
@@ -113,6 +125,7 @@ export default function AccessRequestsPanel() {
                 {user.status === 'denied' && (
                   <button onClick={() => updateStatus(user.id, 'pending')} className="text-[11px] text-blue-500 font-medium px-2 py-1 rounded-lg bg-blue-50">Re-enable</button>
                 )}
+                <button onClick={() => removeUser(user.id)} disabled={actionLoading === user.id} className="text-[11px] text-red-600 font-medium px-2 py-1 rounded-lg bg-red-50 disabled:opacity-50">Remove</button>
               </div>
             </div>
           ))}
