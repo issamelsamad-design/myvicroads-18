@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ExternalLink, Fingerprint, HelpCircle } from 'lucide-react';
+import PersonalInfoModal from '@/components/PersonalInfoModal';
 
 const SectionCard = ({ children, className = '' }) => (
   <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden ${className}`}>
@@ -33,6 +35,7 @@ const MenuItem = ({ title, subtitle, onClick, showChevron = true, icon }) => (
 
 export default function Profile() {
   const navigate = useNavigate();
+  const [isPersonalInfoOpen, setIsPersonalInfoOpen] = useState(false);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
@@ -47,7 +50,7 @@ export default function Profile() {
           <SectionHeader title="Profile and settings" />
           <MenuItem 
             title="Personal information" 
-            onClick={() => navigate('/profile/personal-info')} 
+            onClick={() => setIsPersonalInfoOpen(true)} 
             showChevron={false}
           />
           <MenuItem 
@@ -89,6 +92,12 @@ export default function Profile() {
           />
         </SectionCard>
       </div>
+
+      {/* The Pop-up Modal */}
+      <PersonalInfoModal 
+        isOpen={isPersonalInfoOpen} 
+        onClose={() => setIsPersonalInfoOpen(false)} 
+      />
     </div>
   );
 }
