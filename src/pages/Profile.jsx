@@ -1,68 +1,61 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
-import MenuItem from '../components/vicroads/MenuItem';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, Mail, MapPin, Lock, Key, Fingerprint, HelpCircle, MessageSquare } from 'lucide-react';
+import MenuItem from '@/components/MenuItem';
 
-const profileSettings = [
-  { title: 'Personal information', subtitle: null },
-  { title: 'Addresses', subtitle: null },
-  { title: 'Security settings', subtitle: null },
-  { title: 'Passkey settings', subtitle: null, showChevron: true },
-];
-
-const appControls = [
-  { title: 'Biometrics and settings', subtitle: 'Enable biometrics and deactivate card or account', showChevron: true },
-  { title: 'Help and info', subtitle: null, showChevron: true, path: '/help-and-info' },
-  { title: 'Provide app feedback', subtitle: null, rightIcon: <ExternalLink className="w-4 h-4 text-muted-foreground" /> },
-];
+const AccordionSection = ({ title, icon, children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border-b border-border last:border-b-0">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/50 transition-colors">
+        <div className="flex items-center gap-3">
+          <div className="text-muted-foreground">{icon}</div>
+          <p className="text-[15px] font-medium text-foreground">{title}</p>
+        </div>
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown className="w-5 h-5 text-muted-foreground" /></motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden bg-muted/20">
+            <div className="pl-14 pr-5 py-2 border-l-2 border-primary/20 ml-6">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function Profile() {
   const navigate = useNavigate();
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="px-5 pt-8 pb-8 min-h-screen bg-[#ebebf0]"
-    >
-      <h1 className="text-[28px] font-bold text-foreground mb-6">Profile</h1>
-
-      {/* Profile and settings */}
-      <div className="mb-4">
-        <div className="bg-white rounded-2xl px-5 shadow-sm">
-          <p className="text-[15px] font-bold text-gray-900 pt-5 pb-3">Profile and settings</p>
-          {profileSettings.map((item, idx) => (
-            <div key={idx}>
-              <div className="border-t border-gray-100" />
-              <MenuItem
-                title={item.title}
-                subtitle={item.subtitle}
-                showChevron={item.showChevron}
-                onClick={item.path ? () => navigate(item.path) : undefined}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="bg-background min-h-screen pb-24">
+      <div className="bg-card px-5 py-6 border-b border-border">
+        <h1 className="text-2xl font-bold text-foreground">Profile</h1>
+        <p className="text-sm text-muted-foreground mt-1">Manage your account settings</p>
       </div>
-
-      {/* App controls */}
-      <div>
-        <div className="bg-white rounded-2xl px-5 shadow-sm">
-          <p className="text-[15px] font-bold text-gray-900 pt-5 pb-3">App controls</p>
-          {appControls.map((item, idx) => (
-            <div key={idx}>
-              <div className="border-t border-gray-100" />
-              <MenuItem
-                title={item.title}
-                subtitle={item.subtitle}
-                showChevron={item.showChevron}
-                rightIcon={item.rightIcon}
-                onClick={item.path ? () => navigate(item.path) : undefined}
-              />
-            </div>
-          ))}
-        </div>
+      <div className="bg-card mt-6">
+        <AccordionSection title="Personal information" icon={<Mail className="w-5 h-5" />}>
+          <MenuItem title="Email" subtitle="Update your email address" onClick={() => navigate('/profile/email')} showChevron />
+          <MenuItem title="Mobile number" subtitle="Update your phone number" onClick={() => navigate('/profile/mobile')} showChevron />
+        </AccordionSection>
+        <AccordionSection title="Addresses" icon={<MapPin className="w-5 h-5" />}>
+          <MenuItem title="Home address" subtitle="Update your residential address" onClick={() => navigate('/profile/address')} showChevron />
+        </AccordionSection>
+        <AccordionSection title="Security settings" icon={<Lock className="w-5 h-5" />}>
+          <MenuItem title="Password" subtitle="Change your account password" onClick={() => navigate('/profile/security')} showChevron />
+          <MenuItem title="Two-step verification" subtitle="Add extra security to your account" onClick={() => navigate('/profile/security?tab=2fa')} showChevron />
+        </AccordionSection>
+        <AccordionSection title="Passkey settings" icon={<Key className="w-5 h-5" />}>
+          <MenuItem title="Manage passkeys" subtitle="Add or remove passkeys for passwordless login" onClick={() => navigate('/profile/passkeys')} showChevron />
+        </AccordionSection>
       </div>
-    </motion.div>
+      <div className="bg-card mt-6">
+        <div className="px-5 py-3"><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">App controls</p></div>
+        <MenuItem title="Biometrics" subtitle="Use fingerprint or face ID to log in" rightIcon={<Fingerprint className="w-5 h-5 text-muted-foreground" />} onClick={() => navigate('/profile/biometrics')} showChevron />
+        <MenuItem title="Help and info" subtitle="Get support and learn more" rightIcon={<HelpCircle className="w-5 h-5 text-muted-foreground" />} onClick={() => navigate('/profile/help')} showChevron />
+        <MenuItem title="Feedback" subtitle="Send us your thoughts" rightIcon={<MessageSquare className="w-5 h-5 text-muted-foreground" />} onClick={() => navigate('/profile/feedback')} showChevron />
+      </div>
+    </div>
   );
 }

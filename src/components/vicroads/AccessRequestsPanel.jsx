@@ -51,8 +51,9 @@ export default function AccessRequestsPanel() {
     setActionLoading(null);
   };
 
-  const byName = (a, b) =>
-    (a.name || a.email || '').localeCompare(b.name || b.email || '', undefined, { sensitivity: 'base' });
+  // Sort by the name that's displayed; users with no name go to the bottom.
+  const sortKey = (u) => (u.name && u.name.trim()) ? u.name.trim() : '￿';
+  const byName = (a, b) => sortKey(a).localeCompare(sortKey(b), undefined, { sensitivity: 'base' });
   const pending = users.filter(u => u.status === 'pending').sort(byName);
   const others = users.filter(u => u.status !== 'pending').sort(byName);
 
