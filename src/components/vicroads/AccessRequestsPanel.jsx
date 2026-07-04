@@ -39,8 +39,10 @@ export default function AccessRequestsPanel() {
     setActionLoading(null);
   };
 
-  const pending = users.filter(u => u.status === 'pending');
-  const others = users.filter(u => u.status !== 'pending');
+  const byName = (a, b) =>
+    (a.name || a.email || '').localeCompare(b.name || b.email || '', undefined, { sensitivity: 'base' });
+  const pending = users.filter(u => u.status === 'pending').sort(byName);
+  const others = users.filter(u => u.status !== 'pending').sort(byName);
 
   if (loading) {
     return (
